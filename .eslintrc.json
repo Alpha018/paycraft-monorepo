@@ -13,6 +13,15 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
+        "quotes": [2, "single", { "avoidEscape": true }],
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }
+        ],
+        "object-curly-spacing": [
+          "error",
+          "always"
+        ],
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
