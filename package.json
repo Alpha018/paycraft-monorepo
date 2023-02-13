@@ -2,7 +2,19 @@
   "name": "paycraft-mono-repo",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "core:dev": "nx serve paycraft-core-service",
+    "core:prod": "node dist/apps/paycraft-core-service/main.js",
+    "core:build": "nx build paycraft-core-service",
+    "core:lint": "nx lint paycraft-core-service",
+    "core:test": "nx test paycraft-core-service",
+    "core:format": "nx format paycraft-core-service",
+    "lint": "nx run-many --all --target=lint --parallel",
+    "format": "nx affected:lint --fix",
+    "test": "nx run-many --all --target=test --parallel",
+    "prepare": "husky install",
+    "postinstall": "[ -d '.husky' ] && husky install || true"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -14,6 +26,8 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
     "@nrwl/eslint-plugin-nx": "15.6.3",
@@ -30,6 +44,8 @@
     "@typescript-eslint/parser": "^5.36.1",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
+    "eslint-plugin-sonarjs": "^0.18.0",
+    "husky": "^8.0.3",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "nx": "15.6.3",
