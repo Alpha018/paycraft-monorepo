@@ -2,9 +2,6 @@
  * This is not a production server yet!
  * This is only a minimal backend to get started.
  */
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import * as process from 'process';
-
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 

@@ -10,6 +10,7 @@ export const loggerOptions = (appName: string) => ({
         winston.format.timestamp(),
         nestWinstonModuleUtilities.format.nestLike(appName, {
           prettyPrint: true,
+          colors: true
         }),
       ),
     }),

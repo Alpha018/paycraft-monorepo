@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Command {
+  id                Int                 @id @default(autoincrement())
+  status            CommandStatus
+  transaction       Transaction         @relation(fields: [transactionId], references: [id])
+  transactionId     Int
+  plan              Plan                @relation(fields: [planId], references: [id])
+  planId            Int
+  userName          String
+  expireDate        DateTime
+  executeCommands   CommandLine[]       @relation("ExecuteCommands")
+  expiredCommands   CommandLine[]       @relation("ExpiredCommands")
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now())
+  deletedAt         DateTime?
+}
+
+model Transaction {
+  id                Int                 @id @default(autoincrement())
+  commands          Command[]
+  status            TransactionStatus
+  server            Server              @relation(fields: [serverId], references: [id])
+  serverId          Int
+  token             String
+  amount            Int
+  userName          String
+  payMethod         PaymentMethod
+  rawData           Json?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now())
+  deletedAt         DateTime?
+}
+
+model Plan {
+  id                Int                 @id @default(autoincrement())
+  amount            Int
+  expireTime        Int
+  expireUnit        TimeUnit
+  contentfulId      String?
+  contentfulData    Json?
+  commands          Command[]
+  server            Server              @relation(fields: [serverId], references: [id])
+  serverId          Int
+  executeCommands   CommandTemplate[]   @relation("ExecuteCommands")
+  expiredCommands   CommandTemplate[]   @relation("ExpiredCommands")
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now())
+  deletedAt         DateTime?
+}
+
+model Server {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  serverToken       String              @unique
+  ip                String
+  logoUrl           String
+  pageUrl           String
+  successPaymentUrl String
+  failPaymentUrl    String
+  admin             User                @relation(fields: [adminId], references: [id])
+  adminId           Int
+  maxPlans          Int?                @default(3)
+  transactions      Transaction[]
+  plans             Plan[]
+  onlinePlayers     UserServer[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now())
+  deletedAt         DateTime?
+
+  @@index([serverToken, ip])
+}
+
+model UserServer {
+  id                Int                 @id @default(autoincrement())
+  displayName       String
+  uniqueId          String
+  server            Server              @relation(fields: [serverId], references: [id])
+  serverId          Int
+
+  @@index([displayName, uniqueId])
+}
+
+model User {
+  id                Int                 @id @default(autoincrement())
+  firebaseUid       String              @unique
+  servers           Server[]
+  roles             UserRole[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now())
+  deletedAt         DateTime?
+
+  @@index([firebaseUid])
+}
+
+model CommandTemplate {
+  id                Int                 @id @default(autoincrement())
+  command           String
+  requiredOnline    Boolean
+  commandExecute    Plan                @relation("ExecuteCommands", fields: [commandExecuteId], references: [id])
+  commandExecuteId  Int
+  commandExpired    Plan                @relation("ExpiredCommands", fields: [commandExpiredId], references: [id])
+  commandExpiredId  Int
+}
+
+model CommandLine {
+  id                Int                 @id @default(autoincrement())
+  command           String
+  requiredOnline    Boolean
+  commandExecute    Command             @relation("ExecuteCommands", fields: [commandExecuteId], references: [id])
+  commandExecuteId  Int
+  commandExpired    Command             @relation("ExpiredCommands", fields: [commandExpiredId], references: [id])
+  commandExpiredId  Int
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  OWNER
+}
+
+enum PaymentMethod {
+  TRANSBANK
+}
+
+enum TransactionStatus {
+  STARTED
+  ERROR
+  PAID
+}
+
+enum TimeUnit {
+  MINUTE
+  HOUR
+  DAY
+  MONTH
+  YEAR
+}
+
+enum CommandStatus {
+  STARTED
+  SEND
+  DONE
+  SEND_EXPIRED
+  EXPIRED
+}
