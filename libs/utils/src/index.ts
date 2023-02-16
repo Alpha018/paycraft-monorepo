@@ -1,3 +1,5 @@
 export * from './lib/logger'
 export * from './lib/validation-errors-to-string'
 export * from './lib/object-literal'
+export * from './lib/string'
+export * from './lib/util'

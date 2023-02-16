@@ -1,0 +1,19 @@
+syntax = "proto3";
+import "response/user.proto";
+import "request/user.proto";
+import "request/server.proto";
+import "response/server.proto";
+
+package core;
+
+service userController {
+  rpc createUser(user.request.types.createUserInput) returns (user.response.types.postgresUser) {}
+  rpc getUserInformationById(user.request.types.getUserInputId) returns (user.response.types.getUserResponse) {}
+  rpc getUserInformationByEmail(user.request.types.getUserInputEmail) returns (user.response.types.getUserResponse) {}
+}
+
+service serverController {
+  rpc createServer(server.request.types.createServerInput) returns (server.response.types.createServer) {}
+  rpc getServersByUser(server.request.types.getServerByUser) returns (server.response.types.getManyServers) {}
+  rpc getServer(server.request.types.getServerByServer) returns (server.response.types.getServer) {}
+}

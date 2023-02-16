@@ -17,7 +17,7 @@ export const loggerOptions = (appName: string) => ({
   ],
 });
 
-export function createContextWinston(
+export function createWinstonContext(
   constructorName: string,
   functionName: string,
 ) {

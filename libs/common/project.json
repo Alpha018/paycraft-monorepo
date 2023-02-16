@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/common/src",
   "projectType": "library",
+  "watch": true,
   "targets": {
     "build": {
       "executor": "@nrwl/js:tsc",
@@ -12,7 +13,14 @@
         "tsConfig": "libs/common/tsconfig.lib.json",
         "packageJson": "libs/common/package.json",
         "main": "libs/common/src/index.ts",
-        "assets": ["libs/common/*.md"]
+        "assets": [
+          "libs/common/*.md",
+          {
+            "input": "libs/common/src/assets",
+            "glob": "**/*",
+            "output": "src/assets/"
+          }
+        ]
       }
     },
     "lint": {

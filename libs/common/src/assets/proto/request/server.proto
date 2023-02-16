@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package server.request.types;
+
+message createServerInput {
+  string name = 1;
+  string ip = 2;
+  string logoUrl = 3;
+  string pageUrl = 4;
+  string successPaymentUrl = 5;
+  string failPaymentUrl = 6;
+  uint32 adminId = 7;
+}
+
+message getServerByUser {
+  optional uint32 id = 1;
+  optional string firebaseUid = 2;
+}
+
+message getServerByServer {
+  optional uint32 id = 1;
+  optional string serverToken = 2;
+}

@@ -1,5 +1,5 @@
 {
-  "name": "@paycraft-mono-repo/utils",
+  "name": "utils",
   "version": "0.0.1",
   "type": "commonjs"
 }

@@ -1,0 +1,18 @@
+syntax = "proto3";
+import "response/user.proto";
+
+package user.request.types;
+
+message createUserInput {
+  string displayName = 1;
+  string email = 2;
+  user.response.types.userRole role = 3;
+}
+
+message getUserInputId {
+  optional uint32 id = 1;
+}
+
+message getUserInputEmail {
+  optional string email = 1;
+}

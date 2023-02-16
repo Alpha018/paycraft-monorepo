@@ -2,45 +2,52 @@
  * This is not a production server yet!
  * This is only a minimal backend to get started.
  */
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { join } from 'path';
+
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 import { loggerOptions } from 'utils';
 import { WinstonModule } from 'nest-winston';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConfigService } from '@nestjs/config';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { RpcValidationFilter } from 'common';
+
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    transport: Transport.GRPC,
+    options: {
+      url: 'localhost:3000',
+      package: 'core',
+      protoPath: join(__dirname, '..', '..', 'libs', 'common', 'src', 'assets', 'proto', 'service.proto'),
+      loader: {
+        keepCase: true,
+        longs: Number,
+        enums: String,
+        defaults: false,
+        arrays: true,
+        objects: true,
+        includeDirs: [
+          join(__dirname, '..', '..', 'libs', 'common', 'src', 'assets', 'proto')
+        ],
+      },
+    },
     logger: WinstonModule.createLogger({
       ...loggerOptions(process.env.APPLICATION_NAME)
     }),
   });
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT') || 3333;
-  const globalPrefix = 'api';
 
-  app.enableCors({
-    origin: '*',
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-    ],
-    methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    preflightContinue: false,
-  });
-  app.setGlobalPrefix(globalPrefix);
-
+  app.useGlobalFilters(new RpcValidationFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      whitelist: true,
     }),
   );
 
-  await app.listen(port, () => {
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  });
+  await app.listen();
 }
 
 bootstrap();

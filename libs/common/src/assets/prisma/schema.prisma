@@ -21,8 +21,8 @@ model Command {
   expireDate        DateTime
   executeCommands   CommandLine[]       @relation("ExecuteCommands")
   expiredCommands   CommandLine[]       @relation("ExpiredCommands")
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @default(now())
+  createdAt         DateTime?           @default(now())
+  updatedAt         DateTime?           @default(now())
   deletedAt         DateTime?
 }
 
@@ -37,8 +37,8 @@ model Transaction {
   userName          String
   payMethod         PaymentMethod
   rawData           Json?
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @default(now())
+  createdAt         DateTime?           @default(now())
+  updatedAt         DateTime?           @default(now())
   deletedAt         DateTime?
 }
 
@@ -54,8 +54,8 @@ model Plan {
   serverId          Int
   executeCommands   CommandTemplate[]   @relation("ExecuteCommands")
   expiredCommands   CommandTemplate[]   @relation("ExpiredCommands")
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @default(now())
+  createdAt         DateTime?           @default(now())
+  updatedAt         DateTime?           @default(now())
   deletedAt         DateTime?
 }
 
@@ -74,8 +74,8 @@ model Server {
   transactions      Transaction[]
   plans             Plan[]
   onlinePlayers     UserServer[]
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @default(now())
+  createdAt         DateTime?           @default(now())
+  updatedAt         DateTime?           @default(now())
   deletedAt         DateTime?
 
   @@index([serverToken, ip])
@@ -96,8 +96,8 @@ model User {
   firebaseUid       String              @unique
   servers           Server[]
   roles             UserRole[]
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @default(now())
+  createdAt         DateTime?           @default(now())
+  updatedAt         DateTime?           @default(now())
   deletedAt         DateTime?
 
   @@index([firebaseUid])

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package user.response.types;
+
+message getUserResponse {
+  postgresUser database = 1;
+  firebaseUser firebase = 2;
+}
+
+message postgresUser {
+  int64 id = 1;
+  string firebaseUid = 2;
+  repeated userRole roles = 3;
+  string password = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+  string deletedAt = 7;
+}
+
+message firebaseUser {
+  message ProviderData {
+    string uid = 1;
+    string displayName = 2;
+    string email = 3;
+    string providerId = 4;
+  }
+
+  string uid = 1;
+  string email = 2;
+  bool emailVerified = 3;
+  string displayName = 4;
+  bool disabled = 5;
+  string tokensValidAfterTime = 6;
+  repeated ProviderData providerData = 7;
+}
+
+enum userRole {
+  USER = 0;
+  ADMIN = 1;
+  OWNER = 2;
+}
