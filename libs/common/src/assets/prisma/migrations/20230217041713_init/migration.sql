@@ -107,8 +107,8 @@ CREATE TABLE "CommandTemplate" (
     "id" SERIAL NOT NULL,
     "command" TEXT NOT NULL,
     "requiredOnline" BOOLEAN NOT NULL,
-    "commandExecuteId" INTEGER NOT NULL,
-    "commandExpiredId" INTEGER NOT NULL,
+    "commandExecuteId" INTEGER,
+    "commandExpiredId" INTEGER,
 
     CONSTRAINT "CommandTemplate_pkey" PRIMARY KEY ("id")
 );
@@ -118,8 +118,8 @@ CREATE TABLE "CommandLine" (
     "id" SERIAL NOT NULL,
     "command" TEXT NOT NULL,
     "requiredOnline" BOOLEAN NOT NULL,
-    "commandExecuteId" INTEGER NOT NULL,
-    "commandExpiredId" INTEGER NOT NULL,
+    "commandExecuteId" INTEGER,
+    "commandExpiredId" INTEGER,
 
     CONSTRAINT "CommandLine_pkey" PRIMARY KEY ("id")
 );
@@ -158,13 +158,13 @@ ALTER TABLE "Server" ADD CONSTRAINT "Server_adminId_fkey" FOREIGN KEY ("adminId"
 ALTER TABLE "UserServer" ADD CONSTRAINT "UserServer_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CommandTemplate" ADD CONSTRAINT "CommandTemplate_commandExecuteId_fkey" FOREIGN KEY ("commandExecuteId") REFERENCES "Plan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CommandTemplate" ADD CONSTRAINT "CommandTemplate_commandExecuteId_fkey" FOREIGN KEY ("commandExecuteId") REFERENCES "Plan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CommandTemplate" ADD CONSTRAINT "CommandTemplate_commandExpiredId_fkey" FOREIGN KEY ("commandExpiredId") REFERENCES "Plan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CommandTemplate" ADD CONSTRAINT "CommandTemplate_commandExpiredId_fkey" FOREIGN KEY ("commandExpiredId") REFERENCES "Plan"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CommandLine" ADD CONSTRAINT "CommandLine_commandExecuteId_fkey" FOREIGN KEY ("commandExecuteId") REFERENCES "Command"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CommandLine" ADD CONSTRAINT "CommandLine_commandExecuteId_fkey" FOREIGN KEY ("commandExecuteId") REFERENCES "Command"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CommandLine" ADD CONSTRAINT "CommandLine_commandExpiredId_fkey" FOREIGN KEY ("commandExpiredId") REFERENCES "Command"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CommandLine" ADD CONSTRAINT "CommandLine_commandExpiredId_fkey" FOREIGN KEY ("commandExpiredId") REFERENCES "Command"("id") ON DELETE SET NULL ON UPDATE CASCADE;

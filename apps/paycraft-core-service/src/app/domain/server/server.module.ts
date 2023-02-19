@@ -10,7 +10,7 @@ import { ServerRepository } from './repository/server.repository';
 @Module({
   imports: [
     HandleModule,
-    CoreConfigModule
+    CoreConfigModule,
   ],
   controllers: [
     ServerController
@@ -20,5 +20,9 @@ import { ServerRepository } from './repository/server.repository';
     ServerRepository,
     PrismaService,
   ],
+  exports: [
+    ServerService,
+    ServerRepository
+  ]
 })
 export class ServerModule {}

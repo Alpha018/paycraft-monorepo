@@ -1,10 +1,10 @@
 import * as admin from 'firebase-admin';
 import App = admin.app.App;
 
-import { Injectable, OnModuleInit, Scope } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { CoreServiceConfig } from '../../config/core-service.config';
 
-@Injectable({ scope: Scope.DEFAULT })
+@Injectable()
 export class FirebaseService implements OnModuleInit {
   private app: App;
   constructor(private readonly configService: CoreServiceConfig) {}

@@ -22,10 +22,10 @@ export function createWinstonContext(
   functionName: string,
 ) {
   return {
+    module: constructorName,
+    function: functionName,
     labels: {
-      app: process.env.APPLICATION_NAME,
-      module: constructorName,
-      function: functionName,
+      app: process.env.APPLICATION_NAME
     },
   };
 }

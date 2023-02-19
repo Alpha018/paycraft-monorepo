@@ -21,4 +21,16 @@ export class CoreServiceEnv {
   @IsString()
   @IsNotEmpty()
   DATABASE_URL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  CONTENTFUL_MANAGE_TOKEN: string;
+
+  @IsString()
+  @IsNotEmpty()
+  CONTENTFUL_SPACE_ID: string;
+
+  @IsString()
+  @IsNotEmpty()
+  CONTENTFUL_ENVIRONMENT_ID: string;
 }

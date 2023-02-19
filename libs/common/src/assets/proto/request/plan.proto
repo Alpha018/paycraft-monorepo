@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package plan.request.types;
+
+message getPlanUser {
+  int32 serverReference = 1;
+  string firebaseUid = 2;
+}
+
+message plansByUser {
+  int32 id = 1;
+  string firebaseUid = 2;
+}
+
+message createPlan {
+  uint32 serverReference = 1;
+  uint32 amount = 2;
+  string title = 3;
+  string description = 4;
+  uint32 expireTime = 5;
+  string expireUnit = 6;
+  repeated executeCommands executeCommands = 7;
+  repeated expiredCommands expiredCommands = 8;
+  string firebaseUid = 9;
+}
+
+message updatePlan {
+  uint32 id = 1;
+  string firebaseUid = 2;
+  uint32 amount = 3;
+  string title = 4;
+  string description = 5;
+  uint32 expireTime = 6;
+  string expireUnit = 7;
+  repeated executeCommands executeCommands = 8;
+  repeated expiredCommands expiredCommands = 9;
+}
+
+message executeCommands {
+  string command = 1;
+  bool requiredOnline = 2;
+}
+
+message expiredCommands {
+  string command = 1;
+  bool requiredOnline = 2;
+}

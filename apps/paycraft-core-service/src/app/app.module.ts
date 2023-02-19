@@ -8,6 +8,7 @@ import { CoreConfigModule } from './config/core-config.module';
 import { CoreServiceConfig } from './config/core-service.config';
 import { UserModule } from './domain/user/user.module';
 import { ServerModule } from './domain/server/server.module';
+import { PlanModule } from './domain/plan/plan.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { ServerModule } from './domain/server/server.module';
       inject: [CoreServiceConfig],
     }),
     UserModule,
-    ServerModule
+    ServerModule,
+    PlanModule
   ],
   providers: [],
 })

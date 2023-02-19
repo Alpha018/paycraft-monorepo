@@ -20,4 +20,16 @@ export class CoreServiceConfig {
     ).toString('binary');
     return JSON.parse(jsonString)
   }
+
+  get contentfulConfig(): {
+    manageToken: string,
+    spaceId: string,
+    environmentId: string,
+  } {
+    return {
+      manageToken: this.config.get<string>('CONTENTFUL_MANAGE_TOKEN'),
+      spaceId: this.config.get<string>('CONTENTFUL_SPACE_ID'),
+      environmentId: this.config.get<string>('CONTENTFUL_ENVIRONMENT_ID'),
+    }
+  }
 }

@@ -107,20 +107,20 @@ model CommandTemplate {
   id                Int                 @id @default(autoincrement())
   command           String
   requiredOnline    Boolean
-  commandExecute    Plan                @relation("ExecuteCommands", fields: [commandExecuteId], references: [id])
-  commandExecuteId  Int
-  commandExpired    Plan                @relation("ExpiredCommands", fields: [commandExpiredId], references: [id])
-  commandExpiredId  Int
+  commandExecute    Plan?               @relation("ExecuteCommands", fields: [commandExecuteId], references: [id])
+  commandExecuteId  Int?
+  commandExpired    Plan?               @relation("ExpiredCommands", fields: [commandExpiredId], references: [id])
+  commandExpiredId  Int?
 }
 
 model CommandLine {
   id                Int                 @id @default(autoincrement())
   command           String
   requiredOnline    Boolean
-  commandExecute    Command             @relation("ExecuteCommands", fields: [commandExecuteId], references: [id])
-  commandExecuteId  Int
-  commandExpired    Command             @relation("ExpiredCommands", fields: [commandExpiredId], references: [id])
-  commandExpiredId  Int
+  commandExecute    Command?            @relation("ExecuteCommands", fields: [commandExecuteId], references: [id])
+  commandExecuteId  Int?
+  commandExpired    Command?            @relation("ExpiredCommands", fields: [commandExpiredId], references: [id])
+  commandExpiredId  Int?
 }
 
 enum UserRole {
