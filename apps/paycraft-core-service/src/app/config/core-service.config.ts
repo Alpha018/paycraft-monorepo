@@ -5,6 +5,13 @@ import { ConfigService } from '@nestjs/config';
 export class CoreServiceConfig {
   constructor(private config: ConfigService) {}
 
+  get appConfig(): {
+    nodeEnv: string
+  } {
+    return {
+      nodeEnv: this.config.get('NODE_ENV')
+    }
+  }
   get databaseURL(): string {
     return this.config.get('DATABASE_URL');
   }
@@ -30,6 +37,18 @@ export class CoreServiceConfig {
       manageToken: this.config.get<string>('CONTENTFUL_MANAGE_TOKEN'),
       spaceId: this.config.get<string>('CONTENTFUL_SPACE_ID'),
       environmentId: this.config.get<string>('CONTENTFUL_ENVIRONMENT_ID'),
+    }
+  }
+
+  get transbankConfig(): {
+    commerceCode: string,
+    apiKey: string,
+    returnUrl: string,
+  } {
+    return {
+      commerceCode: this.config.get<string>('TBK_COMMERCE_CODE'),
+      apiKey: this.config.get<string>('TBK_API_KEY'),
+      returnUrl: this.config.get<string>('TBK_RETURN_URL'),
     }
   }
 }

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package transaction.response.types;
+
+message createTransaction {
+  string url = 1;
+  string token = 2;
+  uint32 transactionId = 3;
+  string redirect = 4;
+}
+
+message resultTransaction {
+  string redirectUrl = 1;
+}

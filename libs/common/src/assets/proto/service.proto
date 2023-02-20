@@ -5,6 +5,8 @@ import "request/server.proto";
 import "response/server.proto";
 import "request/plan.proto";
 import "response/plan.proto";
+import "request/transaction.proto";
+import "response/transaction.proto";
 
 package core;
 
@@ -26,4 +28,9 @@ service planController {
   rpc createPlan(plan.request.types.createPlan) returns (plan.response.types.planData) {}
   rpc updateUsersPlanById(plan.request.types.updatePlan) returns (plan.response.types.planData) {}
   rpc deleteUsersPlanById(plan.request.types.plansByUser) returns (plan.response.types.planData) {}
+}
+
+service transactionController {
+  rpc initTransaction(transaction.request.types.createTransaction) returns (transaction.response.types.createTransaction) {}
+  rpc getTransactionResult(transaction.request.types.transactionResult) returns (transaction.response.types.resultTransaction) {}
 }

@@ -15,10 +15,8 @@ model Command {
   status            CommandStatus
   transaction       Transaction         @relation(fields: [transactionId], references: [id])
   transactionId     Int
-  plan              Plan                @relation(fields: [planId], references: [id])
-  planId            Int
   userName          String
-  expireDate        DateTime
+  expireDate        DateTime?
   executeCommands   CommandLine[]       @relation("ExecuteCommands")
   expiredCommands   CommandLine[]       @relation("ExpiredCommands")
   createdAt         DateTime?           @default(now())
@@ -32,7 +30,9 @@ model Transaction {
   status            TransactionStatus
   server            Server              @relation(fields: [serverId], references: [id])
   serverId          Int
-  token             String
+  plan              Plan                @relation(fields: [planId], references: [id])
+  planId            Int
+  token             String              @unique
   amount            Int
   userName          String
   payMethod         PaymentMethod
@@ -49,7 +49,7 @@ model Plan {
   expireUnit        TimeUnit
   contentfulId      String?
   contentfulData    Json?
-  commands          Command[]
+  transactions      Transaction[]
   server            Server              @relation(fields: [serverId], references: [id])
   serverId          Int
   executeCommands   CommandTemplate[]   @relation("ExecuteCommands")

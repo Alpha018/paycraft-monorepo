@@ -18,9 +18,8 @@ CREATE TABLE "Command" (
     "id" SERIAL NOT NULL,
     "status" "CommandStatus" NOT NULL,
     "transactionId" INTEGER NOT NULL,
-    "planId" INTEGER NOT NULL,
     "userName" TEXT NOT NULL,
-    "expireDate" TIMESTAMP(3) NOT NULL,
+    "expireDate" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
@@ -33,6 +32,7 @@ CREATE TABLE "Transaction" (
     "id" SERIAL NOT NULL,
     "status" "TransactionStatus" NOT NULL,
     "serverId" INTEGER NOT NULL,
+    "planId" INTEGER NOT NULL,
     "token" TEXT NOT NULL,
     "amount" INTEGER NOT NULL,
     "userName" TEXT NOT NULL,
@@ -125,6 +125,9 @@ CREATE TABLE "CommandLine" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Transaction_token_key" ON "Transaction"("token");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Server_serverToken_key" ON "Server"("serverToken");
 
 -- CreateIndex
@@ -143,10 +146,10 @@ CREATE INDEX "User_firebaseUid_idx" ON "User"("firebaseUid");
 ALTER TABLE "Command" ADD CONSTRAINT "Command_transactionId_fkey" FOREIGN KEY ("transactionId") REFERENCES "Transaction"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Command" ADD CONSTRAINT "Command_planId_fkey" FOREIGN KEY ("planId") REFERENCES "Plan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_planId_fkey" FOREIGN KEY ("planId") REFERENCES "Plan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Plan" ADD CONSTRAINT "Plan_serverId_fkey" FOREIGN KEY ("serverId") REFERENCES "Server"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

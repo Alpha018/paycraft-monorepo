@@ -9,6 +9,7 @@ import { CoreServiceConfig } from './config/core-service.config';
 import { UserModule } from './domain/user/user.module';
 import { ServerModule } from './domain/server/server.module';
 import { PlanModule } from './domain/plan/plan.module';
+import { TransactionModule } from './domain/transaction/transaction.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { PlanModule } from './domain/plan/plan.module';
     }),
     UserModule,
     ServerModule,
-    PlanModule
+    PlanModule,
+    TransactionModule
   ],
   providers: [],
 })

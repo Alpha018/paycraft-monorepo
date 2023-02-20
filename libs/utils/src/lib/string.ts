@@ -18,7 +18,7 @@ export function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function generateUrl(url: string, data: Record<string, string> = {}): URL {
+export function generateUrl(url: string, data: Record<string, any> = {}): URL {
   const finalUrl = new URL(url);
   for (const property in data) {
     finalUrl.searchParams.append(property, data[property]);

@@ -40,6 +40,10 @@ export class PlanRepository {
       .findUnique({
         where: {
           id
+        },
+        include: {
+          executeCommands: true,
+          expiredCommands: true,
         }
       });
   }

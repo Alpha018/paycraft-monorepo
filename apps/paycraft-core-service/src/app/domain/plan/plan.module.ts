@@ -26,5 +26,8 @@ import { SharedModule } from '../../shared/shared.module';
     PlanService,
     PlanRepository,
   ],
+  exports: [
+    PlanRepository
+  ]
 })
 export class PlanModule {}
