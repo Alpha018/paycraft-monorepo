@@ -1,6 +1,6 @@
 import {
   IsEnum,
-  IsNotEmpty, IsNumber,
+  IsNotEmpty, IsNumber, IsObject,
   IsOptional, IsPositive,
   IsString,
 } from 'class-validator';
@@ -32,6 +32,24 @@ export class TransactionResultDto {
   @IsOptional()
   @IsString()
   tbkToken: string;
+}
+
+export class BigCommerceTransaction {
+  @IsNotEmpty()
+  @IsObject()
+  rawData: unknown;
+
+  @IsNotEmpty()
+  @IsString()
+  userName: string;
+
+  @IsNumber()
+  @IsPositive()
+  planId: number;
+
+  @IsNumber()
+  @IsPositive()
+  serverId: number;
 }
 
 export class TransactionUpdateExecuted {

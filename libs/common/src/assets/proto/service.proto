@@ -33,4 +33,5 @@ service planController {
 service transactionController {
   rpc initTransaction(transaction.request.types.createTransaction) returns (transaction.response.types.createTransaction) {}
   rpc getTransactionResult(transaction.request.types.transactionResult) returns (transaction.response.types.resultTransaction) {}
+  rpc bigCommerceTransaction(transaction.request.types.bigCommerceTransaction) returns (transaction.response.types.createTransactionBigCommerce) {}
 }

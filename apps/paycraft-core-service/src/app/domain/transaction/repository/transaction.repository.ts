@@ -73,7 +73,7 @@ export class TransactionRepository {
       },
       data: {
         status,
-        rawData: webpayTransaction as any,
+        rawData: webpayTransaction as never,
       }
     });
   }

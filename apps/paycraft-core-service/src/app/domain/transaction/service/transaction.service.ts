@@ -1,4 +1,4 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createWinstonContext, generateUrl } from 'utils';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -7,7 +7,7 @@ import { nanoid } from 'nanoid';
 import { TransbankService } from '../../../shared/service/transbank.service';
 import { PlanRepository } from '../../plan/repository/plan.repository';
 import { ServerRepository } from '../../server/repository/server.repository';
-import { TransactionDto, TransactionResultDto } from '../dto/transaction.dto';
+import { BigCommerceTransaction, TransactionDto, TransactionResultDto } from '../dto/transaction.dto';
 import { PaymentMethod, TransactionStatus, CommandStatus } from '@prisma/client'
 import { TransactionRepository } from '../repository/transaction.repository';
 import { CommandRepository } from '../repository/command.repository';
@@ -210,7 +210,7 @@ export class TransactionService {
         TransactionStatus.PAID,
         dataWebpay
       );
-      const command = await this.commandRepository.createCommand({
+      /*const command = */await this.commandRepository.createCommand({
           status: CommandStatus.STARTED,
           transactionId: transaction.id,
           userName: transaction.userName,
@@ -290,5 +290,61 @@ export class TransactionService {
       discountTotal: total * 0.9,
       count: transactions.length,
     };
+  }
+
+  async createTransactionBigCommerce(request: BigCommerceTransaction): Promise<{ transactionId: number; }> {
+    const meta = createWinstonContext(
+      this.constructor.name,
+      this.createTransactionBigCommerce.name
+    );
+
+    let plan
+    try {
+      plan = await this.planRepository.getPlanById(request.planId);
+    } catch (e) {
+
+      this.prismaErrorHandler.handlePrismaErrors(e, this.initTransaction.name)
+    }
+
+    if (!plan) {
+      this.logger.error('Plan not found', {
+        ...meta,
+        planId: request.planId
+      });
+      throw new NotFoundException('Plan not found');
+    }
+
+    const orderId = `PayCraft-Order-${nanoid(10)}`;
+    let transaction;
+    try {
+      transaction = await this.transactionRepository.createTransaction({
+        status: TransactionStatus.PAID,
+        token: orderId,
+        amount: plan.amount,
+        userName: request.userName,
+        payMethod: PaymentMethod.TRANSBANK,
+        serverId: request.serverId,
+        planId: request.planId,
+        rawData: request.rawData as never
+      });
+
+      await this.commandRepository.createCommand({
+          status: CommandStatus.STARTED,
+          transactionId: transaction.id,
+          userName: transaction.userName,
+        },
+        plan.executeCommands.map((data) => ({
+          ...this.createCommandOption(data, transaction.userName)
+        })),
+        plan.expiredCommands.map((data) => ({
+          ...this.createCommandOption(data, transaction.userName)
+        })));
+    } catch (e) {
+      this.prismaErrorHandler.handlePrismaErrors(e, this.initTransaction.name);
+    }
+
+    return {
+      transactionId: transaction.id
+    }
   }
 }

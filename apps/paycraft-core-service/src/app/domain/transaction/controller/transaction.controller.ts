@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { TransactionService } from '../service/transaction.service';
-import { TransactionDto, TransactionResultDto } from '../dto/transaction.dto';
+import {BigCommerceTransaction, TransactionDto, TransactionResultDto} from '../dto/transaction.dto';
 import { GrpcMethod } from '@nestjs/microservices';
 
 @Controller()
@@ -13,9 +13,16 @@ export class TransactionController {
   }
 
   @GrpcMethod('transactionController', 'getTransactionResult')
-  async getTransactionResult(
+  getTransactionResult(
     request: TransactionResultDto,
   ) {
     return this.transactionService.getTransactionResult(request);
+  }
+
+  @GrpcMethod('transactionController', 'bigCommerceTransaction')
+  bigCommerceTransaction(
+    request: BigCommerceTransaction,
+  ) {
+    return this.transactionService.createTransactionBigCommerce(request);
   }
 }

@@ -12,3 +12,7 @@ message createTransaction {
 message resultTransaction {
   string redirectUrl = 1;
 }
+
+message createTransactionBigCommerce {
+  uint32 transactionId = 1;
+}
