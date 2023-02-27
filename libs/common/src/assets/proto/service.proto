@@ -7,6 +7,8 @@ import "request/plan.proto";
 import "response/plan.proto";
 import "request/transaction.proto";
 import "response/transaction.proto";
+import "request/command.proto";
+import "response/command.proto";
 
 package core;
 
@@ -20,6 +22,7 @@ service serverController {
   rpc createServer(server.request.types.createServerInput) returns (server.response.types.createServer) {}
   rpc getServersByUser(server.request.types.getServerByUser) returns (server.response.types.getManyServers) {}
   rpc getServer(server.request.types.getServerByServer) returns (server.response.types.getServer) {}
+  rpc setUsersServer(server.request.types.setUsersServer) returns (server.response.types.getServer) {}
 }
 
 service planController {
@@ -34,4 +37,14 @@ service transactionController {
   rpc initTransaction(transaction.request.types.createTransaction) returns (transaction.response.types.createTransaction) {}
   rpc getTransactionResult(transaction.request.types.transactionResult) returns (transaction.response.types.resultTransaction) {}
   rpc bigCommerceTransaction(transaction.request.types.bigCommerceTransaction) returns (transaction.response.types.createTransactionBigCommerce) {}
+}
+
+service CommandController {
+  rpc getPendingToSendTransaction(command.request.types.getPendingTransactionInput) returns (command.response.types.commandArray) {}
+  rpc getExpiredToSendTransaction(command.request.types.getPendingTransactionInput) returns (command.response.types.commandArray) {}
+  rpc changeCommandToSend(command.request.types.changeOrGetCommandInput) returns (command.response.types.command) {}
+  rpc changeCommandToSendExpired(command.request.types.changeOrGetCommandInput) returns (command.response.types.command) {}
+  rpc getCommandById(command.request.types.changeOrGetCommandInput) returns (command.response.types.command) {}
+  rpc changeCommandStatus(command.request.types.changeCommandStatusInput) returns (command.response.types.command) {}
+  rpc changeExpireDate(command.request.types.changeExpireDate) returns (command.response.types.command) {}
 }

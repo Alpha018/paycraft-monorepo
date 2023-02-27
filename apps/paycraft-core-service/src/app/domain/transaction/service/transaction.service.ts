@@ -10,8 +10,10 @@ import { ServerRepository } from '../../server/repository/server.repository';
 import { BigCommerceTransaction, TransactionDto, TransactionResultDto } from '../dto/transaction.dto';
 import { PaymentMethod, TransactionStatus, CommandStatus } from '@prisma/client'
 import { TransactionRepository } from '../repository/transaction.repository';
-import { CommandRepository } from '../repository/command.repository';
+import { CommandRepository } from '../../command/repository/command.repository';
 import { PrismaErrorHandler } from '../../handlers/handle-prisma-error';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class TransactionService {
@@ -23,6 +25,7 @@ export class TransactionService {
     private readonly serverRepository: ServerRepository,
     private readonly commandRepository: CommandRepository,
     private readonly prismaErrorHandler: PrismaErrorHandler,
+    @InjectQueue('TRANSACTION') private readonly transactionQueue: Queue,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
   }
@@ -210,7 +213,7 @@ export class TransactionService {
         TransactionStatus.PAID,
         dataWebpay
       );
-      /*const command = */await this.commandRepository.createCommand({
+      const command = await this.commandRepository.createCommand({
           status: CommandStatus.STARTED,
           transactionId: transaction.id,
           userName: transaction.userName,
@@ -227,6 +230,13 @@ export class TransactionService {
       //   transaction.server.serverToken,
       //   command.id
       // );
+
+      // SEND TO SERVER
+      await this.transactionQueue.add({
+        serverToken: transaction.server.serverToken,
+        id: command.id
+      });
+
       this.logger.info('Command created, redirecting...', { ...meta });
       const url = generateUrl(transaction.server.successPaymentUrl, {
         ...dataWebpay,
@@ -316,6 +326,10 @@ export class TransactionService {
 
     const orderId = `PayCraft-Order-${nanoid(10)}`;
     let transaction;
+
+    this.logger.info('Starting process to send information', {
+      ...meta
+    })
     try {
       transaction = await this.transactionRepository.createTransaction({
         status: TransactionStatus.PAID,
@@ -328,7 +342,11 @@ export class TransactionService {
         rawData: request.rawData as never
       });
 
-      await this.commandRepository.createCommand({
+      this.logger.info('Transaction created', {
+        ...meta
+      })
+
+      const command = await this.commandRepository.createCommand({
           status: CommandStatus.STARTED,
           transactionId: transaction.id,
           userName: transaction.userName,
@@ -339,7 +357,20 @@ export class TransactionService {
         plan.expiredCommands.map((data) => ({
           ...this.createCommandOption(data, transaction.userName)
         })));
+
+      this.logger.info('Command Created!!', {
+        ...meta
+      })
+
+      await this.transactionQueue.add({
+        serverToken: transaction.server.serverToken,
+        id: command.id
+      });
     } catch (e) {
+      this.logger.error('Error in prisma', {
+        ...meta,
+        e: e
+      })
       this.prismaErrorHandler.handlePrismaErrors(e, this.initTransaction.name);
     }
 

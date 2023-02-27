@@ -1,4 +1,15 @@
-import { IsIP, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUrl } from 'class-validator';
+import {
+  IsArray,
+  IsIP,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUrl,
+  ValidateNested
+} from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreateServerDto {
   @IsNotEmpty()
@@ -56,4 +67,26 @@ export class ServerQuery {
   @IsString()
   @IsOptional()
   serverToken?: string;
+}
+
+export class OnlineUsersDto {
+
+  @IsNumber()
+  @IsPositive()
+  serverId: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => userServerDto)
+  onlineUsers: userServerDto[];
+}
+
+export class userServerDto {
+  @IsString()
+  @IsNotEmpty()
+  uniqueId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  displayName: string;
 }

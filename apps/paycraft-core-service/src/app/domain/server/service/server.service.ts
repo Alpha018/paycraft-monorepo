@@ -3,7 +3,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { PrismaErrorHandler } from '../../handlers/handle-prisma-error';
 import { HandleFirebaseError } from '../../handlers/handle-firebase-error';
-import { CreateServerDto, ServerQuery, ServerUserQuery } from '../dto/server.dto';
+import { CreateServerDto, OnlineUsersDto, ServerQuery, ServerUserQuery } from "../dto/server.dto";
 import { createWinstonContext } from 'utils';
 import { ServerRepository } from '../repository/server.repository';
 import { nanoid } from 'nanoid'
@@ -79,6 +79,31 @@ export class ServerService {
         id: query.id,
         serverToken: query.serverToken
       });
+    } catch (e) {
+      this.prismaErrorHandler.handlePrismaErrors(e, this.createServer.name)
+    }
+
+    return { server };
+  }
+
+  async setUsersServer(data: OnlineUsersDto) {
+    const meta = createWinstonContext(
+      this.constructor.name,
+      this.setUsersServer.name
+    );
+
+    this.logger.info('Setting information from online users', {
+      ...meta,
+      serverToken: data.serverId
+    });
+
+    let server;
+    try {
+      await this.serverRepository.deleteOnlineUsersByServer(data.serverId)
+      server = await this.serverRepository.updateOnlineUsersByServer(
+        data.serverId,
+        data.onlineUsers
+      );
     } catch (e) {
       this.prismaErrorHandler.handlePrismaErrors(e, this.createServer.name)
     }

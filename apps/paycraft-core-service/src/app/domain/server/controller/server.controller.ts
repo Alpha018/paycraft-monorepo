@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ServerService } from '../service/server.service';
-import { CreateServerDto, ServerQuery, ServerUserQuery } from '../dto/server.dto';
+import { CreateServerDto, OnlineUsersDto, ServerQuery, ServerUserQuery } from "../dto/server.dto";
 import { GrpcMethod } from '@nestjs/microservices';
 
 @Controller()
@@ -22,5 +22,10 @@ export class ServerController {
   @GrpcMethod('serverController', 'getServer')
   getServer(data: ServerQuery) {
     return this.serverService.getServer(data);
+  }
+
+  @GrpcMethod('serverController', 'setUsersServer')
+  setUsersServer(data: OnlineUsersDto) {
+    return this.serverService.setUsersServer(data);
   }
 }

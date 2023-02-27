@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package command.response.types;
+
+message executeCommands {
+  uint32 id = 1;
+  string command = 2;
+  bool requiredOnline = 3;
+  uint32 commandExecuteId = 4;
+  optional int32 commandExpiredId = 5;
+}
+
+message expiredCommands {
+  uint32 id = 1;
+  string command = 2;
+  bool requiredOnline = 3;
+  optional int32 commandExecuteId = 4;
+  uint32 commandExpiredId = 5;
+}
+
+message command {
+  uint32 id = 1;
+  string status = 2;
+  uint32 transactionId = 3;
+  string userName = 4;
+  string expireDate = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+  string deletedAt = 8;
+  repeated executeCommands executeCommands = 9;
+  repeated expiredCommands expiredCommands = 10;
+  Transaction transaction = 11;
+}
+
+message Server {
+  uint32 id = 1;
+  string name = 2;
+  string serverToken = 3;
+  string ip = 4;
+  string logoUrl = 5;
+  string pageUrl = 6;
+  string successPaymentUrl = 7;
+  string failPaymentUrl = 8;
+  uint32 adminId = 9;
+  uint32 maxPlans = 10;
+  string createdAt = 11;
+  string updatedAt = 12;
+  string deletedAt = 13;
+}
+
+message Transaction {
+  uint32 id = 1;
+  string status = 2;
+  uint32 serverId = 3;
+  uint32 planId = 4;
+  string token = 5;
+  uint32 amount = 6;
+  string userName = 7;
+  string payMethod = 8;
+  google.protobuf.Any rawData = 9;
+  string createdAt = 10;
+  string updatedAt = 11;
+  string deletedAt = 12;
+  Server server = 13;
+}
+
+message commandArray {
+  repeated command items = 1;
+}

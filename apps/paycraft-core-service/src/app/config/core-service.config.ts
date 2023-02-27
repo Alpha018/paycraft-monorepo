@@ -51,4 +51,14 @@ export class CoreServiceConfig {
       returnUrl: this.config.get<string>('TBK_RETURN_URL'),
     }
   }
+
+  get redisConfig(): {
+    host: string,
+    port: string,
+  } {
+    return {
+      host: this.config.get<string>('REDIS_QUEUE_HOST'),
+      port: this.config.get<string>('REDIS_QUEUE_PORT')
+    }
+  }
 }

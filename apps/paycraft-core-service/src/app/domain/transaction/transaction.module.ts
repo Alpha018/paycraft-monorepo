@@ -4,12 +4,13 @@ import { CoreConfigModule } from '../../config/core-config.module';
 import { HandleModule } from '../handlers/handle.module';
 import { SharedModule } from '../../shared/shared.module';
 import { TransactionController } from './controller/transaction.controller';
-import { CommandRepository } from './repository/command.repository';
+import { CommandRepository } from '../command/repository/command.repository';
 import { TransactionRepository } from './repository/transaction.repository';
 import { TransactionService } from './service/transaction.service';
 import { PrismaService } from '../../prisma.service';
 import { PlanModule } from '../plan/plan.module';
 import { ServerModule } from '../server/server.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -17,7 +18,10 @@ import { ServerModule } from '../server/server.module';
     CoreConfigModule,
     SharedModule,
     PlanModule,
-    ServerModule
+    ServerModule,
+    BullModule.registerQueue({
+      name: 'TRANSACTION',
+    }),
   ],
   controllers: [
     TransactionController

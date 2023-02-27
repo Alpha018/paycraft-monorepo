@@ -55,6 +55,10 @@ export class CommandRepository {
           }
         }],
         status: CommandStatus.STARTED,
+      },
+      include: {
+        executeCommands: true,
+        expiredCommands: true
       }
     });
   }
@@ -78,6 +82,10 @@ export class CommandRepository {
         expireDate: {
           lte: new Date(),
         },
+      },
+      include: {
+        executeCommands: true,
+        expiredCommands: true
       }
     });
   }
@@ -90,6 +98,15 @@ export class CommandRepository {
       where: {
         id: id,
         status
+      },
+      include: {
+        executeCommands: true,
+        expiredCommands: true,
+        transaction: {
+          include: {
+            server: true
+          }
+        }
       }
     });
   }
@@ -104,9 +121,32 @@ export class CommandRepository {
       },
       data: {
         status
+      },
+      include: {
+        executeCommands: true,
+        expiredCommands: true
       }
     });
   }
+
+  changeCommandDate(
+    id: number,
+    expireDate: Date
+  ) {
+    return this.prismaService.command.update({
+      where: {
+        id
+      },
+      data: {
+        expireDate
+      },
+      include: {
+        executeCommands: true,
+        expiredCommands: true
+      }
+    });
+  }
+
 
   getCommandDate(
     serverId: number,

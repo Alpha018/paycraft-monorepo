@@ -20,7 +20,7 @@ interface TransactionController {
 @Controller('hooks')
 export class HookController implements OnModuleInit{
 
-  private heroesService: TransactionController;
+  private transactionService: TransactionController;
   constructor(
     private readonly bigCommerceService: BigcommerceService,
     @Inject('CORE_SERVICE') private client: ClientGrpc
@@ -28,12 +28,12 @@ export class HookController implements OnModuleInit{
   }
 
   onModuleInit() {
-    this.heroesService = this.client.getService<TransactionController>('transactionController');
+    this.transactionService = this.client.getService<TransactionController>('transactionController');
   }
   @Post()
   async getUsersPlans(@Body() body: HookOrder) {
     const result = await this.bigCommerceService.getOrder(body.data.id)
-    await lastValueFrom(this.heroesService.bigCommerceTransaction({
+    await lastValueFrom(this.transactionService.bigCommerceTransaction({
       ...result,
       serverId: 1,
     }))

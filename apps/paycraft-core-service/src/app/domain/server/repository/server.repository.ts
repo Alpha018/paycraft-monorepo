@@ -5,6 +5,7 @@ import { PrismaErrorHandler } from '../../handlers/handle-prisma-error';
 import { HandleFirebaseError } from '../../handlers/handle-firebase-error';
 import { CreateServerDto } from '../dto/server.dto';
 import { PrismaService } from '../../../prisma.service';
+import { UserServer } from '@prisma/client';
 
 @Injectable()
 export class ServerRepository {
@@ -38,6 +39,30 @@ export class ServerRepository {
         }]
       }
     });
+  }
+
+  deleteOnlineUsersByServer(id: number) {
+    return this.prismaService.userServer.deleteMany({
+      where: {
+        serverId: id
+      }
+    });
+  }
+
+  updateOnlineUsersByServer(id: number, onlineUsers: Partial<UserServer>[]) {
+    return this.prismaService.server.update({
+      where: {
+        id
+      },
+      data: {
+        onlinePlayers: {
+          create: onlineUsers.map((data) => ({
+            displayName: data.displayName,
+            uniqueId: data.uniqueId
+          }))
+        }
+      }
+    })
   }
 
   getServersByUser(params: {

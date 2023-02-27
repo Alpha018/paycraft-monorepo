@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   configServiceMock,
   restServiceEnvMock,
-} from '../__mocks__/core-service.mock';
+} from '../__mocks__/rest-service.mock';
 import { Test, TestingModule } from '@nestjs/testing';
 
 describe('CustomerServiceConfig', () => {

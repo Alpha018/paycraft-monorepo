@@ -28,6 +28,9 @@ export class TransactionRepository {
         rawData: data.rawData,
         serverId: data.serverId,
         planId: data.planId,
+      },
+      include: {
+        server: true
       }
     });
   }

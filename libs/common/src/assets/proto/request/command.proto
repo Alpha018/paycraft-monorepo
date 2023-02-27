@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package command.request.types;
+
+message getPendingTransactionInput {
+  string serverToken = 1;
+}
+
+message changeOrGetCommandInput {
+  int32 id = 1;
+  optional string status = 2;
+}
+
+message changeCommandStatusInput {
+  int32 id = 1;
+  string type = 2;
+}
+
+message changeExpireDate {
+  int32 id = 1;
+  string expireDate = 2;
+}

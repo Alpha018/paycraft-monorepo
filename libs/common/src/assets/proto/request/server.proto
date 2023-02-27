@@ -21,3 +21,14 @@ message getServerByServer {
   optional uint32 id = 1;
   optional string serverToken = 2;
 }
+
+message setUsersServer {
+
+  message userServer {
+    string displayName = 1;
+    string uniqueId = 2;
+  }
+
+  int32 serverId = 1;
+  repeated userServer onlineUsers = 2;
+}
