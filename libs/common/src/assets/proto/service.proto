@@ -7,6 +7,8 @@ import "request/plan.proto";
 import "response/plan.proto";
 import "request/transaction.proto";
 import "response/transaction.proto";
+import "request/health.proto";
+import "response/health.proto";
 
 package core;
 
@@ -33,4 +35,9 @@ service planController {
 service transactionController {
   rpc initTransaction(transaction.request.types.createTransaction) returns (transaction.response.types.createTransaction) {}
   rpc getTransactionResult(transaction.request.types.transactionResult) returns (transaction.response.types.resultTransaction) {}
+}
+
+service Health {
+  rpc Check(health.request.types.HealthCheckRequest) returns (health.response.types.HealthCheckResponse);
+  rpc Watch(health.request.types.HealthCheckRequest) returns (stream health.response.types.HealthCheckResponse);
 }

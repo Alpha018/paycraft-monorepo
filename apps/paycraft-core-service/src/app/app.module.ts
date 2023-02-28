@@ -10,6 +10,7 @@ import { UserModule } from './domain/user/user.module';
 import { ServerModule } from './domain/server/server.module';
 import { PlanModule } from './domain/plan/plan.module';
 import { TransactionModule } from './domain/transaction/transaction.module';
+import { HealthController } from "./health.controller";
 
 @Module({
   imports: [
@@ -30,5 +31,8 @@ import { TransactionModule } from './domain/transaction/transaction.module';
     TransactionModule
   ],
   providers: [],
+  controllers: [
+    HealthController
+  ]
 })
 export class AppModule {}

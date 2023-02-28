@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  core:
+    build:
+      context: .
+      dockerfile: Dockerfile-core
+    platform: linux/amd64
+    container_name: paycraft-core-service
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tmp:/tmp
+    networks:
+      - shared-net
+    links:
+      - db
+
+  db:
+    image: mdillon/postgis
+    platform: linux/x86_x64
+    container_name: post-grpc
+    ports:
+      - 5431:5432
+    networks:
+      - shared-net
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+networks:
+  shared-net:
+    external: true

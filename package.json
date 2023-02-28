@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "core:dev": "nx serve paycraft-core-service",
-    "core:prod": "node dist/apps/paycraft-core-service/main.js",
+    "core:prod": "npx prisma migrate deploy && node dist/apps/paycraft-core-service/main.js",
     "core:build": "nx build paycraft-core-service",
     "core:lint": "nx lint paycraft-core-service",
     "core:test": "nx test paycraft-core-service",
@@ -13,10 +13,11 @@
     "format": "nx affected:lint --fix",
     "test": "nx run-many --all --target=test --parallel",
     "prepare": "husky install",
-    "postinstall": "[ -d '.husky' ] && husky install || true"
+    "postinstall": "[ -d '.husky' ] && husky install || true",
+    "prisma": "prisma generate"
   },
   "prisma": {
-    "schema": "libs/common/src/assets/prisma/schema.prisma"
+    "schema": "dist/libs/common/src/assets/prisma/schema.prisma"
   },
   "private": true,
   "dependencies": {
