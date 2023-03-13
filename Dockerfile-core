@@ -1,11 +1,5 @@
 FROM node:18 as builder
 
-ENV GRPC_HEALTH_PROBE_VERSION="v0.3.1"
-
-RUN GRPC_HEALTH_PROBE_VERSION=v0.3.1 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
-
 WORKDIR /app/builder
 COPY . .
 
@@ -15,6 +9,12 @@ RUN npm run core:build
 FROM node:18-alpine
 
 WORKDIR /app
+
+ENV GRPC_HEALTH_PROBE_VERSION="v0.3.1"
+
+RUN GRPC_HEALTH_PROBE_VERSION=v0.3.1 && \
+    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
+    chmod +x /bin/grpc_health_probe
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nestjs -u 1001
