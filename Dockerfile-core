@@ -4,6 +4,8 @@ WORKDIR /app/builder
 COPY . .
 
 RUN npm install
+
+RUN npm run prisma:schema
 RUN npm run core:build
 
 FROM node:18-alpine

@@ -14,7 +14,8 @@
     "test": "nx run-many --all --target=test --parallel",
     "prepare": "husky install",
     "postinstall": "[ -d '.husky' ] && husky install || true",
-    "prisma": "prisma generate"
+    "prisma": "prisma generate",
+    "prisma:schema": "prisma generate --schema=libs/common/src/assets/prisma/schema.prisma"
   },
   "prisma": {
     "schema": "dist/libs/common/src/assets/prisma/schema.prisma"
