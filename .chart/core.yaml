@@ -125,8 +125,11 @@ metadata:
   name: core-service
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/grpc-backend: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-test"
+    nginx.org/grpc-services: core-service
+    nginx.org/ssl-services: core-service
   labels:
     helm.sh/chart: core-service-0.1.17
     app.kubernetes.io/name: core-service
