@@ -6,6 +6,7 @@ metadata:
   name: core-service
   namespace: default
   labels:
+    app: core-service
     helm.sh/chart: core-service-0.1.17
     app.kubernetes.io/name: core-service
     app.kubernetes.io/instance: core-service
@@ -20,8 +21,7 @@ spec:
       protocol: TCP
       name: grpc
   selector:
-    app.kubernetes.io/name: core-service
-    app.kubernetes.io/instance: core-service
+    app: core-service
 ---
 # Source: tomas-service/charts/capsula-api/templates/deployment.yaml
 apiVersion: apps/v1
@@ -30,6 +30,7 @@ metadata:
   name: core-service
   labels:
     helm.sh/chart: core-service-0.1.17
+    app: core-service
     app.kubernetes.io/name: core-service
     app.kubernetes.io/instance: core-service
     app.kubernetes.io/version: "latest"
@@ -40,11 +41,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
+      app: core-service
       app.kubernetes.io/name: core-service
       app.kubernetes.io/instance: core-service
   template:
     metadata:
       labels:
+        app: core-service
         app.kubernetes.io/name: core-service
         app.kubernetes.io/instance: core-service
     spec:
@@ -59,16 +62,6 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
-              name: grpc
-              protocol: TCP
-          readinessProbe:
-            exec:
-              command: ["/bin/grpc_health_probe", "-addr=:3000"]
-            initialDelaySeconds: 5
-          livenessProbe:
-            exec:
-              command: ["/bin/grpc_health_probe", "-addr=:3000"]
-            initialDelaySeconds: 10
 
           env:
             - name: DATABASE_URL
@@ -130,15 +123,23 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: core-service
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-test"
   labels:
     helm.sh/chart: core-service-0.1.17
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
     app.kubernetes.io/name: core-service
     app.kubernetes.io/instance: core-service
     app.kubernetes.io/version: "latest"
     app.kubernetes.io/managed-by: Helm
     version: "latest"
 spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - grpc.alphacode.cl
+    secretName: letsencrypt-test
   rules:
     - host: "grpc.alphacode.cl"
       http:
@@ -149,4 +150,4 @@ spec:
               service:
                 name: core-service
                 port:
-                  number: 3000
+                  number: 80
