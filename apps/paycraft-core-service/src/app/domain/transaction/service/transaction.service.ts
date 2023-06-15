@@ -12,6 +12,9 @@ import { PaymentMethod, TransactionStatus, CommandStatus } from '@prisma/client'
 import { TransactionRepository } from '../repository/transaction.repository';
 import { CommandRepository } from '../repository/command.repository';
 import { PrismaErrorHandler } from '../../handlers/handle-prisma-error';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { QueueNames } from 'common';
 
 @Injectable()
 export class TransactionService {
@@ -23,6 +26,7 @@ export class TransactionService {
     private readonly serverRepository: ServerRepository,
     private readonly commandRepository: CommandRepository,
     private readonly prismaErrorHandler: PrismaErrorHandler,
+    @InjectQueue(QueueNames.Transaction) private readonly transactionQueue: Queue,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
   }
@@ -222,11 +226,12 @@ export class TransactionService {
           ...this.createCommandOption(data, transaction.userName)
         })));
 
-      // TODO: send command to server via websocket
-      // await this.connectionSocketService.sendCommandToServerHook(
-      //   transaction.server.serverToken,
-      //   command.id
-      // );
+      //send command to server via websocket
+      await this.transactionQueue.add({
+        serverId: transaction.server.serverToken,
+        commandId: command.id
+      });
+
       this.logger.info('Command created, redirecting...', { ...meta });
       const url = generateUrl(transaction.server.successPaymentUrl, {
         ...dataWebpay,

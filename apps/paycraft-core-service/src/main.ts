@@ -20,7 +20,7 @@ async function bootstrap() {
     transport: Transport.GRPC,
     options: {
       url: '0.0.0.0:3000',
-      package: 'core',
+      package: ['core', 'grpc.health.v1'],
       protoPath: join(__dirname, '..', '..', 'libs', 'common', 'src', 'assets', 'proto', 'service.proto'),
       loader: {
         keepCase: true,

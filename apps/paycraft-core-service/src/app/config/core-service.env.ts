@@ -24,6 +24,10 @@ export class CoreServiceEnv {
 
   @IsString()
   @IsNotEmpty()
+  REDIS_URL: string;
+
+  @IsString()
+  @IsNotEmpty()
   CONTENTFUL_MANAGE_TOKEN: string;
 
   @IsString()

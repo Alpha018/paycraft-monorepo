@@ -10,7 +10,9 @@ import { UserModule } from './domain/user/user.module';
 import { ServerModule } from './domain/server/server.module';
 import { PlanModule } from './domain/plan/plan.module';
 import { TransactionModule } from './domain/transaction/transaction.module';
-import { HealthController } from "./health.controller";
+import { HealthController } from './health.controller';
+import { BullModule } from '@nestjs/bull';
+import { CommandModule } from "./domain/command/command.module";
 
 @Module({
   imports: [
@@ -25,10 +27,19 @@ import { HealthController } from "./health.controller";
       }),
       inject: [CoreServiceConfig],
     }),
+    BullModule.forRootAsync({
+      imports: [CoreConfigModule],
+      useFactory: async (configService: CoreServiceConfig) => ({
+        url: configService.redisConfiguration.url,
+      }),
+      inject: [CoreServiceConfig],
+    }),
+    CoreConfigModule,
     UserModule,
     ServerModule,
     PlanModule,
-    TransactionModule
+    TransactionModule,
+    CommandModule
   ],
   providers: [],
   controllers: [

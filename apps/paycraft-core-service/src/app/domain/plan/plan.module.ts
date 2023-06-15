@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { PrismaService } from '../../prisma.service';
-import { CoreConfigModule } from '../../config/core-config.module';
 import { HandleModule } from '../handlers/handle.module';
 import { ServerModule } from '../server/server.module';
 import { UserModule } from '../user/user.module';
@@ -13,7 +12,6 @@ import { SharedModule } from '../../shared/shared.module';
 @Module({
   imports: [
     HandleModule,
-    CoreConfigModule,
     ServerModule,
     UserModule,
     SharedModule

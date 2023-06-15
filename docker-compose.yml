@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-core
+    image: blacksinx/paycraft-mono-repo_core:latest
     platform: linux/amd64
     container_name: paycraft-core-service
     env_file:
@@ -20,9 +21,29 @@ services:
     links:
       - db
 
+  websocket:
+    build:
+      context: .
+      dockerfile: Dockerfile-websocket
+    image: blacksinx/paycraft-mono-repo_websocket:latest
+    platform: linux/amd64
+    container_name: paycraft-websocket-service
+    env_file:
+      - .env
+    ports:
+      - "3001:3000"
+      - "4000:4000"
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tmp:/tmp
+    networks:
+      - shared-net
+    links:
+      - db
+
   db:
     image: mdillon/postgis
-    platform: linux/x86_x64
     container_name: post-grpc
     ports:
       - 5431:5432

@@ -1,0 +1,151 @@
+# Source: tomas-service/charts/capsula-api/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-service
+  namespace: default
+  labels:
+    helm.sh/chart: websocket-service-0.1.17
+    app.kubernetes.io/name: websocket-service
+    app.kubernetes.io/instance: websocket-service
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+    version: "latest"
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+    - name: websocket
+      port: 4000
+      targetPort: 4000
+
+  selector:
+    app.kubernetes.io/name: websocket-service
+    app.kubernetes.io/instance: websocket-service
+---
+# Source: tomas-service/charts/capsula-api/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websocket-service
+  labels:
+    helm.sh/chart: websocket-service-0.1.17
+    app.kubernetes.io/name: websocket-service
+    app.kubernetes.io/instance: websocket-service
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+    version: "latest"
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: websocket-service
+      app.kubernetes.io/instance: websocket-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: websocket-service
+        app.kubernetes.io/instance: websocket-service
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: websocket-service
+          image: "blacksinx/paycraft-mono-repo_websocket:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+            - name: websocket
+              containerPort: 4000
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 25
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 20
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+
+          env:
+            - name: PORT
+              value: '3000'
+            - name: APPLICATION_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: applicationName
+                  name: websocket-secrets
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  key: redisUrl
+                  name: websocket-secrets
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  key: mongoUrl
+                  name: websocket-secrets
+            - name: CORE_SERVICE_GRPC
+              valueFrom:
+                secretKeyRef:
+                  key: coreServiceGrpc
+                  name: websocket-secrets
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: databaseUrl
+                  name: websocket-secrets
+
+          resources:
+            limits:
+              cpu: 900m
+              memory: 990Mi
+            requests:
+              cpu: 80m
+              memory: 40Mi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: websocket-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "gateway.alphacode.cl"
+      http:
+        paths:
+          - path: /socket.io/
+            pathType: "Prefix"
+            backend:
+              service:
+                name: websocket-service
+                port:
+                  number: 4000
+          - path: /
+            pathType: "Prefix"
+            backend:
+              service:
+                name: websocket-service
+                port:
+                  number: 3000

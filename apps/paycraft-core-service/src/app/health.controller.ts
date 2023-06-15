@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
-import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
-import { Observable, Subject } from 'rxjs';
+import { GrpcMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
 @Controller()
 export class HealthController {

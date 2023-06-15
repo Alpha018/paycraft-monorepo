@@ -5,8 +5,9 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "target": "node",
         "compiler": "tsc",
@@ -14,9 +15,11 @@
         "main": "apps/paycraft-core-service/src/main.ts",
         "tsConfig": "apps/paycraft-core-service/tsconfig.app.json",
         "assets": ["apps/paycraft-core-service/src/assets"],
+        "isolatedConfig": true,
         "webpackConfig": "apps/paycraft-core-service/webpack.config.js"
       },
       "configurations": {
+        "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
@@ -25,25 +28,29 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/js:node",
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
       "options": {
         "buildTarget": "paycraft-core-service:build"
       },
       "configurations": {
+        "development": {
+          "buildTarget": "paycraft-core-service:build:development"
+        },
         "production": {
           "buildTarget": "paycraft-core-service:build:production"
         }
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/paycraft-core-service/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/paycraft-core-service/jest.config.ts",

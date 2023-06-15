@@ -1,4 +1,3 @@
----
 # Source: tomas-service/charts/capsula-api/templates/service.yaml
 apiVersion: v1
 kind: Service
@@ -6,7 +5,6 @@ metadata:
   name: core-service
   namespace: default
   labels:
-    app: core-service
     helm.sh/chart: core-service-0.1.17
     app.kubernetes.io/name: core-service
     app.kubernetes.io/instance: core-service
@@ -16,12 +14,13 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 80
+    - name: grpc
+      port: 3000
       targetPort: 3000
-      protocol: TCP
-      name: grpc
+
   selector:
-    app: core-service
+    app.kubernetes.io/name: core-service
+    app.kubernetes.io/instance: core-service
 ---
 # Source: tomas-service/charts/capsula-api/templates/deployment.yaml
 apiVersion: apps/v1
@@ -30,7 +29,6 @@ metadata:
   name: core-service
   labels:
     helm.sh/chart: core-service-0.1.17
-    app: core-service
     app.kubernetes.io/name: core-service
     app.kubernetes.io/instance: core-service
     app.kubernetes.io/version: "latest"
@@ -41,13 +39,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: core-service
       app.kubernetes.io/name: core-service
       app.kubernetes.io/instance: core-service
   template:
     metadata:
       labels:
-        app: core-service
         app.kubernetes.io/name: core-service
         app.kubernetes.io/instance: core-service
     spec:
@@ -58,10 +54,15 @@ spec:
         {}
       containers:
         - name: core-service
-          image: "blacksinx/paycraft-mono-repo:latest"
-          imagePullPolicy: IfNotPresent
+          image: "blacksinx/paycraft-mono-repo_core:latest"
+          imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - name: grpc
+              containerPort: 3000
+          livenessProbe:
+            grpc:
+              port: 3000
+            initialDelaySeconds: 20
 
           env:
             - name: DATABASE_URL
@@ -99,15 +100,10 @@ spec:
                 secretKeyRef:
                   key: tbkReturnUrl
                   name: core-secrets
-            - name: BIGCOMMERCE_STORE_ID
+            - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  key: bigcommerceStoreId
-                  name: core-secrets
-            - name: BIGCOMMERCE_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  key: bigcommerceAccessToken
+                  key: redisUrl
                   name: core-secrets
 
           resources:
@@ -118,18 +114,13 @@ spec:
               cpu: 80m
               memory: 40Mi
 ---
-# Source: tomas-service/charts/capsula-api/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: core-service
   annotations:
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-    nginx.ingress.kubernetes.io/grpc-backend: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-test"
-    nginx.org/grpc-services: core-service
-    nginx.org/ssl-services: core-service
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
   labels:
     helm.sh/chart: core-service-0.1.17
     app.kubernetes.io/name: core-service
@@ -140,9 +131,9 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-  - hosts:
-    - grpc.alphacode.cl
-    secretName: letsencrypt-test
+    - hosts:
+        - grpc.alphacode.cl
+      secretName: tls-secret
   rules:
     - host: "grpc.alphacode.cl"
       http:
@@ -153,4 +144,4 @@ spec:
               service:
                 name: core-service
                 port:
-                  number: 80
+                  number: 3000

@@ -40,6 +40,14 @@ export class CoreServiceConfig {
     }
   }
 
+  get redisConfiguration(): {
+    url: string
+  } {
+    return {
+      url: this.config.get<string>('REDIS_URL'),
+    }
+  }
+
   get transbankConfig(): {
     commerceCode: string,
     apiKey: string,
