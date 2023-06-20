@@ -232,9 +232,12 @@ export class TransactionService {
         commandId: command.id
       });
 
-      this.logger.info('Command created, redirecting...', { ...meta });
+      this.logger.info('Command created, redirecting...', {
+        ...meta,
+      });
       const url = generateUrl(transaction.server.successPaymentUrl, {
-        ...dataWebpay,
+        amount: dataWebpay.amount,
+        buyOrder: dataWebpay.buy_order,
       });
       return {
         redirectUrl: url.toString()

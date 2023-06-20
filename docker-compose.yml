@@ -18,8 +18,24 @@ services:
       - ./tmp:/tmp
     networks:
       - shared-net
-    links:
-      - db
+
+  rest:
+    build:
+      context: .
+      dockerfile: Dockerfile-rest
+    image: blacksinx/paycraft-mono-repo_rest:latest
+    platform: linux/amd64
+    container_name: paycraft-rest-service
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tmp:/tmp
+    networks:
+      - shared-net
 
   websocket:
     build:
@@ -39,8 +55,6 @@ services:
       - ./tmp:/tmp
     networks:
       - shared-net
-    links:
-      - db
 
   db:
     image: mdillon/postgis

@@ -11,6 +11,8 @@ import { WebsocketConfigModule } from './config/websocket-config.module';
 import { WebsocketServiceConfig } from './config/websocket-service.config';
 import { ConnectionsModule } from './domain/connections/connections.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ExpressAdapter } from '@bull-board/express';
+import { BullBoardModule } from '@bull-board/nestjs';
 
 @Module({
   imports: [
@@ -29,8 +31,13 @@ import { MongooseModule } from '@nestjs/mongoose';
       imports: [WebsocketConfigModule],
       useFactory: async (configService: WebsocketServiceConfig) => ({
         url: configService.redisConfiguration.url,
+        redis: { tls: {} }
       }),
       inject: [WebsocketServiceConfig],
+    }),
+    BullBoardModule.forRoot({
+      route: '/queues',
+      adapter: ExpressAdapter
     }),
     MongooseModule.forRootAsync({
       imports: [WebsocketConfigModule],

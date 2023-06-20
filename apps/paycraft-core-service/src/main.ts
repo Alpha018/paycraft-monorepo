@@ -13,13 +13,14 @@ import { loggerOptions } from 'utils';
 import { WinstonModule } from 'nest-winston';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { RpcValidationFilter } from 'common';
+import * as process from 'process';
 
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
     transport: Transport.GRPC,
     options: {
-      url: '0.0.0.0:3000',
+      url: process.env.CORE_SERVER_GRPC,
       package: ['core', 'grpc.health.v1'],
       protoPath: join(__dirname, '..', '..', 'libs', 'common', 'src', 'assets', 'proto', 'service.proto'),
       loader: {

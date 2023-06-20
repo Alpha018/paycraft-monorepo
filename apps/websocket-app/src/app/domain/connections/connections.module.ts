@@ -15,6 +15,8 @@ import { BullModule } from '@nestjs/bull';
 import { TransactionProcessor } from './processors/transaction.processor';
 import { GrpcConfigs, QueueNames } from 'common';
 import { WebsocketServiceConfig } from '../../config/websocket-service.config';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { BullBoardModule } from '@bull-board/nestjs';
 
 @Module({
   imports: [
@@ -24,6 +26,10 @@ import { WebsocketServiceConfig } from '../../config/websocket-service.config';
     ]),
     BullModule.registerQueue({
       name: QueueNames.Transaction,
+    }),
+    BullBoardModule.forFeature({
+      name: QueueNames.Transaction,
+      adapter: BullMQAdapter,
     }),
     ClientsModule.registerAsync([{
       name: GrpcConfigs.ConnectionName,

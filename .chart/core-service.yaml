@@ -105,6 +105,11 @@ spec:
                 secretKeyRef:
                   key: redisUrl
                   name: core-secrets
+            - name: CORE_SERVER_GRPC
+              valueFrom:
+                secretKeyRef:
+                  key: coreServerGrpc
+                  name: core-secrets
 
           resources:
             limits:
