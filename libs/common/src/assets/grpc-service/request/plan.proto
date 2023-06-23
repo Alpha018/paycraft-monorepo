@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package plan.request.types;
+
+message getPlanUser {
+  int32 serverReference = 1;
+}

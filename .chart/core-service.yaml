@@ -118,35 +118,35 @@ spec:
             requests:
               cpu: 80m
               memory: 40Mi
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: core-service
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-  labels:
-    helm.sh/chart: core-service-0.1.17
-    app.kubernetes.io/name: core-service
-    app.kubernetes.io/instance: core-service
-    app.kubernetes.io/version: "latest"
-    app.kubernetes.io/managed-by: Helm
-    version: "latest"
-spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - grpc.alphacode.cl
-      secretName: tls-secret
-  rules:
-    - host: "grpc.alphacode.cl"
-      http:
-        paths:
-          - path: /
-            pathType: "Prefix"
-            backend:
-              service:
-                name: core-service
-                port:
-                  number: 3000
+#---
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  name: core-service
+#  annotations:
+#    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+#  labels:
+#    helm.sh/chart: core-service-0.1.17
+#    app.kubernetes.io/name: core-service
+#    app.kubernetes.io/instance: core-service
+#    app.kubernetes.io/version: "latest"
+#    app.kubernetes.io/managed-by: Helm
+#    version: "latest"
+#spec:
+#  ingressClassName: nginx
+#  tls:
+#    - hosts:
+#        - grpc.alphacode.cl
+#      secretName: tls-secret
+#  rules:
+#    - host: "grpc.alphacode.cl"
+#      http:
+#        paths:
+#          - path: /
+#            pathType: "Prefix"
+#            backend:
+#              service:
+#                name: core-service
+#                port:
+#                  number: 3000

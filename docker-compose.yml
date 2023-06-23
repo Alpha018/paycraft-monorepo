@@ -19,6 +19,24 @@ services:
     networks:
       - shared-net
 
+  grpc:
+    build:
+      context: .
+      dockerfile: Dockerfile-grpc
+    image: blacksinx/paycraft-mono-repo_grpc:latest
+    platform: linux/amd64
+    container_name: paycraft-grpc-service
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tmp:/tmp
+    networks:
+      - shared-net
+
   rest:
     build:
       context: .

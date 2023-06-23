@@ -1,0 +1,30 @@
+FROM node:18 as builder
+
+WORKDIR /app/builder
+COPY . .
+
+RUN npm install
+
+RUN npm run prisma:schema
+RUN npm run grpc:build
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nestjs -u 1001
+
+COPY --from=builder /app/builder/dist ./dist
+COPY --from=builder /app/builder/package.json ./
+
+ENV HUSKY_SKIP_INSTALL=1
+
+RUN npm install --prod --ignore-scripts
+RUN npm run prisma
+
+USER nestjs
+
+EXPOSE 3000
+
+CMD ["npm", "run", "grpc:prod"]

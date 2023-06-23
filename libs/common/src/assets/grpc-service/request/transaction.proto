@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package transaction.request.types;
+
+message createTransaction {
+  uint32 planId = 1;
+  string payMethod = 2;
+  string userName = 3;
+  uint32 serverId = 4;
+}

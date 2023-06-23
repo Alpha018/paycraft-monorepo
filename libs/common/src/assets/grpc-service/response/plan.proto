@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package plan.response.types;
+
+message planData {
+  uint32 id = 1;
+  uint32 amount = 2;
+  uint32 expireTime = 3;
+  string expireUnit = 4;
+  string contentfulId = 5;
+  uint32 serverId = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+  string deletedAt = 9;
+}
+
+message getPlans {
+  repeated planData data = 1;
+}

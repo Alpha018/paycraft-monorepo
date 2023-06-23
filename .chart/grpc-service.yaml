@@ -1,0 +1,127 @@
+# Source: tomas-service/charts/capsula-api/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc-service
+  namespace: default
+  labels:
+    helm.sh/chart: grpc-service-0.1.17
+    app.kubernetes.io/name: grpc-service
+    app.kubernetes.io/instance: grpc-service
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+    version: "latest"
+spec:
+  type: ClusterIP
+  ports:
+    - name: grpc
+      port: 3000
+      targetPort: 3000
+
+  selector:
+    app.kubernetes.io/name: grpc-service
+    app.kubernetes.io/instance: grpc-service
+---
+# Source: tomas-service/charts/capsula-api/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-service
+  labels:
+    helm.sh/chart: grpc-service-0.1.17
+    app.kubernetes.io/name: grpc-service
+    app.kubernetes.io/instance: grpc-service
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+    version: "latest"
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: grpc-service
+      app.kubernetes.io/instance: grpc-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: grpc-service
+        app.kubernetes.io/instance: grpc-service
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: core-service
+          image: "blacksinx/paycraft-mono-repo_grpc:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: grpc
+              containerPort: 3000
+          livenessProbe:
+            grpc:
+              port: 3000
+            initialDelaySeconds: 20
+
+          env:
+            - name: APPLICATION_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: applicationName
+                  name: grpc-secrets
+            - name: SERVICE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  key: serviceAccount
+                  name: grpc-secrets
+            - name: CORE_SERVER_GRPC
+              valueFrom:
+                secretKeyRef:
+                  key: coreServerGrpc
+                  name: grpc-secrets
+            - name: CORE_SERVICE_GRPC
+              valueFrom:
+                secretKeyRef:
+                  key: coreServiceGrpc
+                  name: grpc-secrets
+
+          resources:
+            limits:
+              cpu: 900m
+              memory: 990Mi
+            requests:
+              cpu: 80m
+              memory: 40Mi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grpc-service
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+  labels:
+    helm.sh/chart: grpc-service-0.1.17
+    app.kubernetes.io/name: grpc-service
+    app.kubernetes.io/instance: grpc-service
+    app.kubernetes.io/version: "latest"
+    app.kubernetes.io/managed-by: Helm
+    version: "latest"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - grpc.alphacode.cl
+      secretName: tls-secret
+  rules:
+    - host: "grpc.alphacode.cl"
+      http:
+        paths:
+          - path: /
+            pathType: "Prefix"
+            backend:
+              service:
+                name: grpc-service
+                port:
+                  number: 3000
