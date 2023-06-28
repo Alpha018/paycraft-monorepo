@@ -29,4 +29,8 @@ export class WebsocketServiceEnv {
   @IsString()
   @IsNotEmpty()
   CORE_SERVICE_GRPC: string
+
+  @IsString()
+  @IsNotEmpty()
+  ABLY_QUEUE_URL: string;
 }

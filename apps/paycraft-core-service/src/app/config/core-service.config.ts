@@ -59,4 +59,12 @@ export class CoreServiceConfig {
       returnUrl: this.config.get<string>('TBK_RETURN_URL'),
     }
   }
+
+  get ablyConfigs(): {
+    token: string,
+  } {
+    return {
+      token: this.config.get<string>('ABLY_TOKEN'),
+    }
+  }
 }

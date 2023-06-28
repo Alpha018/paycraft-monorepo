@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
 import { loggerOptions } from 'utils';
@@ -11,6 +11,7 @@ import { ServerModule } from './domain/server/server.module';
 import { TransactionModule } from './domain/transaction/transaction.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { GrpcModule } from "./utils/wrapper/grpc.module";
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { AppController } from './app.controller';
     SharedModule,
     PlanModule,
     ServerModule,
-    TransactionModule
+    TransactionModule,
+    GrpcModule
   ],
   controllers: [
     AppController

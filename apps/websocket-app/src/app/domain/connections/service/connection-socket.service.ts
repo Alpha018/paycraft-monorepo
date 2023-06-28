@@ -12,7 +12,7 @@ import { CommandController, planController, serverController } from '../proto-ge
 import { CommandStatus } from '@prisma/client'
 import { command } from '../proto-gen/response/command';
 import { lastValueFrom } from 'rxjs';
-import { GrpcConfigs } from 'common';
+import { ConnectionsName } from 'common';
 
 export enum TypeCommandExecuted {
   EXECUTED = 'executedCommand',
@@ -29,7 +29,7 @@ export class ConnectionSocketService {
   constructor(
     private readonly connectionRepository: ConnectionSocketRepository,
     private readonly agenda: AgendaCommandService,
-    @Inject(GrpcConfigs.ConnectionName) private client: ClientGrpc,
+    @Inject(ConnectionsName.ConnectionName) private client: ClientGrpc,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
     this.serverController = this.client.getService<serverController>('serverController');

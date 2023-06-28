@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, Param, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GrpcConfigs } from 'common';
+import { ConnectionsName } from 'common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -15,7 +15,7 @@ export class PlanController {
   planController: planController;
   constructor(
     private readonly configService: ConfigService,
-    @Inject(GrpcConfigs.ConnectionName) private client: ClientGrpc,
+    @Inject(ConnectionsName.ConnectionName) private client: ClientGrpc,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
     this.planController = this.client.getService<planController>('planController');

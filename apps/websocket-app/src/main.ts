@@ -11,12 +11,29 @@ import { WinstonModule } from 'nest-winston';
 import { loggerOptions } from 'utils';
 import { RedisIoAdapter } from './app/domain/connections/adapters/redis.adapter';
 import * as process from 'process';
+import { Transport } from '@nestjs/microservices';
+import { WebsocketServiceConfig } from './app/config/websocket-service.config';
+import { AblyConstant } from 'common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({
       ...loggerOptions(process.env.APPLICATION_NAME)
     }),
+  });
+
+  const configService = app.get<WebsocketServiceConfig>(WebsocketServiceConfig);
+  app.connectMicroservice({
+    transport: Transport.RMQ,
+    options: {
+      urls: [configService.ablyConfigs.queueUrl],
+      queue: AblyConstant.QueueName,
+      prefetchCount: 1,
+      isGlobalPrefetchCount: true,
+      queueOptions: {
+        noAssert: true,
+      }
+    },
   });
 
   const globalPrefix = 'api'
@@ -36,6 +53,7 @@ async function bootstrap() {
 
 
   const port = process.env.PORT || 3000
+  await app.startAllMicroservices();
   await app.listen(port)
 
   Logger.log(

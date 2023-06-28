@@ -1,13 +1,13 @@
-import { Processor, Process, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
-import { Job } from 'bull';
 import { ConnectionSocketService } from '../service/connection-socket.service';
-import { Inject } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { createWinstonContext } from 'utils';
-import { QueueNames } from 'common';
+import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
+import { AblyConstant } from 'common';
+import { Data, MessageMQ } from '../interface/transaction.interface';
 
-@Processor(QueueNames.Transaction)
+@Controller()
 export class TransactionProcessor {
 
   constructor(
@@ -15,52 +15,38 @@ export class TransactionProcessor {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
   }
-  @Process()
-  async sendToServer(job: Job) {
+
+  @EventPattern()
+  async receiveEvent(@Payload() data: MessageMQ, @Ctx() context: RmqContext) {
     const meta = createWinstonContext(
       this.constructor.name,
-      this.sendToServer.name
+      this.receiveEvent.name
     );
+
+    if (data.channel !== AblyConstant.ChannelName) {
+      this.logger.info('Getting message from other channel', {
+        ...meta,
+        data
+      })
+      return;
+    }
+
+    const queueMessage = {
+      ...data.messages[0],
+      data: JSON.parse(data.messages[0].data) as Data
+    }
 
     this.logger.info('Getting information from bull queue', {
       ...meta,
-      data: job.data
+      data: queueMessage
     })
-    const data = await this.connectionSocketService.sendCommandToServerHook(
-      job.data.serverToken,
-      job.data.id,
+    const result = await this.connectionSocketService.sendCommandToServerHook(
+      queueMessage.data.serverId,
+      queueMessage.data.commandId,
     )
-    this.logger.info('Sended to server', {
+    this.logger.info('Sent to server', {
       ...meta,
-      data
+      result
     })
-    return data;
-  }
-
-  @OnQueueCompleted()
-  onQueueCompleted(job: Job): void {
-    const meta = createWinstonContext(
-      this.constructor.name,
-      this.onQueueFailed.name
-    );
-
-    this.logger.info(
-      'Sending to server webhook finish', {
-        ...meta,
-        data: job.data,
-      });
-  }
-
-  @OnQueueFailed()
-  onQueueFailed(job: Job, err: Error): void {
-    const meta = createWinstonContext(
-      this.constructor.name,
-      this.onQueueFailed.name
-    );
-
-    this.logger.error('Sending to server webhook fail', {
-      ...meta,
-      err,
-    });
   }
 }

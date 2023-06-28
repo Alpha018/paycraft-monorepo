@@ -2,9 +2,6 @@ import { Injectable, CanActivate, ExecutionContext, Inject, UnauthorizedExceptio
 import { FirebaseService } from '../service/firebase.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
-import { GrpcConfigs } from 'common';
-import { ClientGrpc } from '@nestjs/microservices';
-import { userController } from '../../domain/proto-gen/service';
 import { createWinstonContext } from 'utils';
 import { User } from '../domain/user';
 

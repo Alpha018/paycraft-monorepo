@@ -9,10 +9,6 @@ import { TransactionService } from './service/transaction.service';
 import { PrismaService } from '../../prisma.service';
 import { PlanModule } from '../plan/plan.module';
 import { ServerModule } from '../server/server.module';
-import { BullModule } from '@nestjs/bull';
-import { QueueNames } from 'common';
-import { BullBoardModule } from '@bull-board/nestjs';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 
 @Module({
   imports: [
@@ -20,15 +16,6 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
     SharedModule,
     PlanModule,
     ServerModule,
-    BullModule.registerQueueAsync(
-      {
-        name: QueueNames.Transaction,
-      },
-    ),
-    BullBoardModule.forFeature({
-      name: QueueNames.Transaction,
-      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
-    }),
   ],
   controllers: [
     TransactionController

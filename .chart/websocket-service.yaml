@@ -111,6 +111,11 @@ spec:
                 secretKeyRef:
                   key: databaseUrl
                   name: websocket-secrets
+            - name: ABLY_QUEUE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: ablyQueueUrl
+                  name: websocket-secrets
 
           resources:
             limits:

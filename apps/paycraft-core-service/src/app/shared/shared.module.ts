@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { FirebaseService } from './service/firebase.service';
 import { ContentfulService } from './service/contentful.service';
 import { TransbankService } from './service/transbank.service';
+import { AblyService } from './service/ably.service';
 
 
 @Module({
@@ -9,12 +10,14 @@ import { TransbankService } from './service/transbank.service';
   providers: [
     FirebaseService,
     ContentfulService,
-    TransbankService
+    TransbankService,
+    AblyService
   ],
   exports: [
     FirebaseService,
     ContentfulService,
-    TransbankService
+    TransbankService,
+    AblyService
   ]
 })
 export class SharedModule {}

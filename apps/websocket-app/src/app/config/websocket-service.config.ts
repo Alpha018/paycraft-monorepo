@@ -40,4 +40,12 @@ export class WebsocketServiceConfig {
       url: this.config.get<string>('CORE_SERVICE_GRPC'),
     }
   }
+
+  get ablyConfigs(): {
+    queueUrl: string,
+  } {
+    return {
+      queueUrl: this.config.get<string>('ABLY_QUEUE_URL'),
+    }
+  }
 }

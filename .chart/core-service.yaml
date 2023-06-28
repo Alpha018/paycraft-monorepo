@@ -110,6 +110,11 @@ spec:
                 secretKeyRef:
                   key: coreServerGrpc
                   name: core-secrets
+            - name: ABLY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: ablyToken
+                  name: core-secrets
 
           resources:
             limits:

@@ -22,9 +22,9 @@ export class InitTransactionDto {
 export class TransactionResultDto {
   @IsOptional()
   @IsString()
-  token_ws: string = '';
+  token_ws = '';
 
   @IsOptional()
   @IsString()
-  TBK_TOKEN: string = '';
+  TBK_TOKEN = '';
 }

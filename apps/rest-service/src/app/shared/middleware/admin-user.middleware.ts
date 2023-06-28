@@ -12,7 +12,7 @@ import { FirebaseService } from '../service/firebase.service';
 import { User } from '../domain/user';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { createWinstonContext } from 'utils';
-import { GrpcConfigs } from 'common';
+import { ConnectionsName } from 'common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { userController } from '../../domain/proto-gen/service';
 import { lastValueFrom } from 'rxjs';
@@ -38,7 +38,7 @@ export class AdminUserMiddleware implements NestMiddleware {
   private userController: userController;
   constructor(
     private readonly firebaseService: FirebaseService,
-    @Inject(GrpcConfigs.ConnectionName) private client: ClientGrpc,
+    @Inject(ConnectionsName.ConnectionName) private client: ClientGrpc,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
     this.userController = this.client.getService<userController>('userController');

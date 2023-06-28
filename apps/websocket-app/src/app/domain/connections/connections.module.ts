@@ -11,12 +11,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { WebsocketConfigModule } from '../../config/websocket-config.module';
 import { AgendaCommandService } from './service/agenda-command.service';
-import { BullModule } from '@nestjs/bull';
 import { TransactionProcessor } from './processors/transaction.processor';
-import { GrpcConfigs, QueueNames } from 'common';
+import { ConnectionsName } from 'common';
 import { WebsocketServiceConfig } from '../../config/websocket-service.config';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { BullBoardModule } from '@bull-board/nestjs';
 
 @Module({
   imports: [
@@ -24,15 +21,8 @@ import { BullBoardModule } from '@bull-board/nestjs';
     MongooseModule.forFeature([
       { name: ConnectionSocket.name, schema: ConnectionSocketSchema },
     ]),
-    BullModule.registerQueue({
-      name: QueueNames.Transaction,
-    }),
-    BullBoardModule.forFeature({
-      name: QueueNames.Transaction,
-      adapter: BullMQAdapter,
-    }),
     ClientsModule.registerAsync([{
-      name: GrpcConfigs.ConnectionName,
+      name: ConnectionsName.ConnectionName,
       imports: [WebsocketConfigModule],
       useFactory: async (configService: WebsocketServiceConfig) => ({
         transport: Transport.GRPC,
@@ -56,12 +46,14 @@ import { BullBoardModule } from '@bull-board/nestjs';
       inject: [WebsocketServiceConfig],
     }]),
   ],
+  controllers: [
+    TransactionProcessor
+  ],
   providers: [
     AppGateway,
     ConnectionSocketRepository,
     ConnectionSocketService,
-    AgendaCommandService,
-    TransactionProcessor
+    AgendaCommandService
   ],
   exports: [
     ConnectionSocketService,

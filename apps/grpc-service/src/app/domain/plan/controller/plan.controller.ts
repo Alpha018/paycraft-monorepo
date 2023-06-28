@@ -1,6 +1,6 @@
-import { Controller, Get, Inject, Param, Req, UseGuards } from "@nestjs/common";
+import { Controller, Inject, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GrpcConfigs } from 'common';
+import { ConnectionsName } from 'common';
 import { ClientGrpc, GrpcMethod } from '@nestjs/microservices';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -8,7 +8,7 @@ import { planController } from '../../proto-gen/service';
 import { lastValueFrom } from 'rxjs';
 import { Metadata } from '@grpc/grpc-js';
 import { GetPlanByServerDto } from '../dto/plan.dto';
-import { GrpcAuthGuard } from "../../../shared/guard/grpc-auth.guard";
+import { GrpcAuthGuard } from '../../../shared/guard/grpc-auth.guard';
 
 @Controller()
 export class PlanController {
@@ -16,7 +16,7 @@ export class PlanController {
   planController: planController;
   constructor(
     private readonly configService: ConfigService,
-    @Inject(GrpcConfigs.ConnectionName) private client: ClientGrpc,
+    @Inject(ConnectionsName.ConnectionName) private client: ClientGrpc,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
     this.planController = this.client.getService<planController>('planController');

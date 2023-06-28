@@ -19,13 +19,7 @@ import {
 import { Topics, UserList } from '../model/connection-socket.model';
 
 @WebSocketGateway(4000, {
-  transports: ['websocket', 'polling'],
-  cors: {
-    origin : '*:*',
-    credentials : true,
-    methods: 'GET,PUT,POST,DELETE'
-  },
-  allowEIO3: true,
+  transports: ['websocket']
 })
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect

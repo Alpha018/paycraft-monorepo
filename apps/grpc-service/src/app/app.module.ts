@@ -10,6 +10,7 @@ import { PlanModule } from './domain/plan/plan.module';
 import { HealthController } from './health.controller';
 import { ServerModule } from './domain/server/server.module';
 import { TransactionModule } from './domain/transaction/transaction.module';
+import { GrpcModule } from './utils/wrapper/grpc.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { TransactionModule } from './domain/transaction/transaction.module';
     GrpcConfigModule,
     PlanModule,
     ServerModule,
-    TransactionModule
+    TransactionModule,
+    GrpcModule
   ],
   providers: [],
   controllers: [

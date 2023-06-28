@@ -37,4 +37,8 @@ export class CoreServiceEnv {
   @IsString()
   @IsNotEmpty()
   CONTENTFUL_ENVIRONMENT_ID: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ABLY_TOKEN: string;
 }

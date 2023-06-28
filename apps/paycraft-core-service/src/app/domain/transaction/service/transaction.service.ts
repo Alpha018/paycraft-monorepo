@@ -1,5 +1,4 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { createWinstonContext, generateUrl } from 'utils';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -12,21 +11,20 @@ import { PaymentMethod, TransactionStatus, CommandStatus } from '@prisma/client'
 import { TransactionRepository } from '../repository/transaction.repository';
 import { CommandRepository } from '../repository/command.repository';
 import { PrismaErrorHandler } from '../../handlers/handle-prisma-error';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
-import { QueueNames } from 'common';
+import { CoreServiceConfig } from '../../../config/core-service.config';
+import { AblyService } from '../../../shared/service/ably.service';
 
 @Injectable()
 export class TransactionService {
   constructor(
-    private readonly configService: ConfigService,
+    private readonly configService: CoreServiceConfig,
     private readonly transbank: TransbankService,
     private readonly transactionRepository: TransactionRepository,
     private readonly planRepository: PlanRepository,
     private readonly serverRepository: ServerRepository,
     private readonly commandRepository: CommandRepository,
     private readonly prismaErrorHandler: PrismaErrorHandler,
-    @InjectQueue(QueueNames.Transaction) private readonly transactionQueue: Queue,
+    private readonly ablyService: AblyService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
   }
@@ -226,11 +224,13 @@ export class TransactionService {
           ...this.createCommandOption(data, transaction.userName)
         })));
 
-      //send command to server via websocket
-      await this.transactionQueue.add({
-        serverId: transaction.server.serverToken,
-        commandId: command.id
-      });
+      await this.ablyService.sendToQueue(
+        'payment',
+        {
+          serverId: transaction.server.serverToken,
+          commandId: command.id
+        }
+      );
 
       this.logger.info('Command created, redirecting...', {
         ...meta,

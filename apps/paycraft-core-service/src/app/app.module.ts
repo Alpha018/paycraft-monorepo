@@ -11,10 +11,7 @@ import { ServerModule } from './domain/server/server.module';
 import { PlanModule } from './domain/plan/plan.module';
 import { TransactionModule } from './domain/transaction/transaction.module';
 import { HealthController } from './health.controller';
-import { BullModule } from '@nestjs/bull';
 import { CommandModule } from './domain/command/command.module';
-import { BullBoardModule } from '@bull-board/nestjs';
-import { ExpressAdapter } from '@bull-board/express';
 
 @Module({
   imports: [
@@ -29,26 +26,12 @@ import { ExpressAdapter } from '@bull-board/express';
       }),
       inject: [CoreServiceConfig],
     }),
-    BullModule.forRootAsync({
-      imports: [CoreConfigModule],
-      useFactory: async (configService: CoreServiceConfig) => ({
-        url: configService.redisConfiguration.url,
-        redis: {
-          tls: {}
-        }
-      }),
-      inject: [CoreServiceConfig],
-    }),
-    BullBoardModule.forRoot({
-      route: '/queues',
-      adapter: ExpressAdapter
-    }),
     CoreConfigModule,
     UserModule,
     ServerModule,
     PlanModule,
     TransactionModule,
-    CommandModule
+    CommandModule,
   ],
   providers: [],
   controllers: [
